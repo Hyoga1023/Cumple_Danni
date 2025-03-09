@@ -1,0 +1,203 @@
+@font-face {
+    font-family: 'MagazineLetter';
+    src: url('./font/MagazineLetterByBrntlbrnl-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    width: 100%;
+    background-image: url('./img/fondo_stitch.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: repeat; 
+    background-color: rgba(255, 255, 255, 0.5);
+    background-blend-mode: overlay;
+    height: 100vh;
+    margin: 0;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    margin-top: 20px;
+}
+
+h1 {
+    font-family: 'MagazineLetter', sans-serif;
+    font-size: 3rem;
+    color: #000;
+    text-align: center;
+    margin-top: 10%;
+    word-spacing: 0.5em;
+}
+
+h2 {
+    font-family: 'arial', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: blueviolet;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    margin-top: 10%;
+}
+
+h3 {
+    font-family: 'arial', sans-serif;
+    color: blueviolet;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.colorful-letter {
+    display: inline-block;
+}
+
+.container_stitch {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container_stitch img {
+    width: 100%;
+    height: auto;
+}
+
+.container_stitch2 {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0 auto;
+    text-align: center; 
+}
+.posdata{
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    color: black;
+    padding: 0 10px;
+    margin-top: 60px;
+}
+.titulo_e_imagen {
+    display: flex;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo para la imagen con movimiento de mecerse */
+.titulo_e_imagen img {
+    width: 70%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block; 
+    padding: 10px;
+
+    /* Animación de mecerse */
+    animation: mecer 4s ease-in-out infinite;
+}
+
+.texto_cumpleaños {
+    font-style: italic;
+}
+
+.mensaje_cumpleaños {
+    font-weight: 500;
+    padding: 0 10px;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    margin-top: 20px;
+}
+
+/* Estilos para los corazones */
+.corazon {
+    position: fixed;
+    top: -5vh;
+    font-size: 20px;
+    transform-origin: center;
+    z-index: 1000;
+    pointer-events: none;
+    animation: caer linear forwards;
+}
+
+/* Animación para la caída de los corazones */
+@keyframes caer {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(25vh) rotate(45deg) translateX(10px);
+    }
+    50% {
+        transform: translateY(50vh) rotate(-20deg) translateX(-15px);
+    }
+    75% {
+        transform: translateY(75vh) rotate(45deg) translateX(15px);
+    }
+    100% {
+        transform: translateY(105vh) rotate(-10deg) translateX(-10px);
+    }
+}
+
+/* Animación para el movimiento de mecerse */
+@keyframes mecer {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(5deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container_stitch img {
+        width: 100%;
+        max-width: 300px;
+        margin-top: 0;
+        padding-bottom: 100px;
+    }
+
+    .container_stitch2 {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo_e_imagen img {
+        width: 100%;
+        max-width: 300px;
+        margin-top: 0;
+        padding: 10px;
+    }
+}
