@@ -27,7 +27,7 @@ header {
 
 h1 {
     font-family: 'MagazineLetter', sans-serif;
-    font-size: 3.5rem;
+    font-size: 4rem;
     color: #000;
     text-align: center;
     margin-top: 10%;
@@ -88,7 +88,7 @@ h3 {
     text-align: center;
     color: black;
     padding: 0 10px;
-    margin-top: 140px;
+    margin-top: 130px;
 }
 .titulo_e_imagen {
     display: flex;
