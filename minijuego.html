@@ -187,7 +187,7 @@
       <div id="start-message" class="message-box">
         <h2>Recolector de Corazones</h2>
         <p>¡Recoge los corazones antes de que toquen el suelo!</p>
-        <p>Objetivo: Llegar a 2500 puntos</p>
+        <p>Objetivo: Llegar a 5000 puntos</p>
         <p>Cuidado: Si dejas caer 10 corazones, pierdes</p>
         <button id="start-btn" class="button">Comenzar</button>
       </div>
@@ -208,7 +208,7 @@
       let score = 0;
       let lostHearts = 0;
       const maxLostHearts = 10;
-      const winScore = 2500;
+      const winScore = 5000;
       let characterSpeed = 4;
       let characterPosition = window.innerWidth / 2;
       let hearts = [];
@@ -216,13 +216,13 @@
       let isMovingLeft = false;
       let isMovingRight = false;
       let lastHeartTime = 0;
-      let heartInterval = 3000; // Tiempo inicial entre corazones (ms)
+      let heartInterval = 2500; // Tiempo inicial entre corazones (ms)
       let minHeartInterval = 500; // Intervalo mínimo entre corazones
       let gameRunning = false;
       let walkingAnimation = null;
       let isWalking = false;
       let isSoundEnabled = true;
-      const heartFallSpeed = 0.7; // Velocidad de caída más lenta
+      const heartFallSpeed = 1.0; // Velocidad de caída más lenta
 
       // Elementos del DOM
       const character = document.getElementById("character");
