@@ -190,7 +190,7 @@
         <h2>Recolector de Corazones</h2>
         <p>¡Recoge los corazones antes de que toquen el suelo! Pero... no toques los Negros</p>
         <p>Objetivo: Llegar a 5000 puntos</p>
-        <p>Cuidado: Si dejas caer 10 corazones, pierdes</p>
+        <p>Cuidado: Si dejas caer 5 corazones, pierdes</p>
         <button id="start-btn" class="button">Comenzar</button>
       </div>
       <div id="victory-message" class="message-box">
@@ -577,7 +577,7 @@
               // Incrementar contador de corazones perdidos solo si no es negro
               lostHearts++;
               livesElement.textContent =
-                "Corazones perdidos: " + lostHearts + "/10";
+                "Corazones perdidos: " + lostHearts + "/5";
 
               // Verificar game over
               if (lostHearts >= maxLostHearts) {
