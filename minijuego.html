@@ -175,7 +175,7 @@
     <div id="game-container">
       <div id="score-container">
         <div id="score">Puntos: 0</div>
-        <div id="lives">Corazones perdidos: 0/5</div>
+        <div id="lives">Corazones perdidos: 0/3</div>
       </div>
       <div id="sound-toggle">🔊</div>
       <div id="grass"></div>
@@ -580,7 +580,7 @@
               // Incrementar contador de corazones perdidos solo si no es negro
               lostHearts++;
               livesElement.textContent =
-                "Corazones perdidos: " + lostHearts + "/5";
+                "Corazones perdidos: " + lostHearts + "/3";
 
               // Verificar game over
               if (lostHearts >= maxLostHearts) {
@@ -665,7 +665,7 @@
         score = 0;
         lostHearts = 0;
         scoreElement.textContent = "Puntos: 0";
-        livesElement.textContent = "Corazones perdidos: 0/5";
+        livesElement.textContent = "Corazones perdidos: 0/3";
         heartInterval = 2000;
         characterPosition = window.innerWidth / 2;
         character.style.left = characterPosition + "px";
