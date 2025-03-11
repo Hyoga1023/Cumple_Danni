@@ -62,7 +62,6 @@ h3 {
 .container_stitch {
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
     margin-bottom: 0;
     justify-content: center;
     align-items: center;
