@@ -120,7 +120,9 @@
         z-index: 10;
         user-select: none;
       }
-
+      .heart.black {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="M15,30 L13,28 C5,20 0,15 0,9 C0,4 4,0 9,0 C12,0 14,1 15,3 C16,1 18,0 21,0 C26,0 30,4 30,9 C30,15 25,20 17,28 L15,30 Z" fill="black"/></svg>');
+      }
       #left-btn {
         left: 20px;
       }
@@ -239,6 +241,36 @@
       const restartBtn = document.getElementById("restart-btn");
       const retryBtn = document.getElementById("retry-btn");
       const soundToggle = document.getElementById("sound-toggle");
+
+      function showMessage(text, x, y) {
+        const message = document.createElement("div");
+        message.textContent = text;
+        message.style.position = "absolute";
+        message.style.left = `${x}px`;
+        message.style.top = `${y}px`;
+        message.style.color = "red";
+        message.style.fontSize = "24px";
+        message.style.fontWeight = "bold";
+        message.style.textShadow = "2px 2px 0 black";
+        message.style.zIndex = 100;
+        message.style.transition = "opacity 1s, transform 1s";
+        message.style.opacity = 1;
+        message.style.transform = "translateY(0)";
+
+        // Añadir el mensaje al contenedor del juego
+        gameContainer.appendChild(message);
+
+        // Animación para desaparecer
+        setTimeout(() => {
+          message.style.opacity = 0;
+          message.style.transform = "translateY(-50px)";
+        }, 100);
+
+        // Eliminar el mensaje después de la animación
+        setTimeout(() => {
+          gameContainer.removeChild(message);
+        }, 1100);
+      }
 
       function moveHearts() {
         hearts.forEach((heart) => {
@@ -383,12 +415,17 @@
         requestAnimationFrame(gameLoop);
       }
 
-      // Función para crear un corazón
       function createHeart() {
         if (!gameRunning) return;
 
         const heart = document.createElement("div");
         heart.className = "heart";
+
+        // Aleatoriamente decidir si es un corazón negro (20% de probabilidad)
+        const isBlackHeart = Math.random() < 0.2; // 20% de probabilidad
+        if (isBlackHeart) {
+          heart.classList.add("black"); // Añadir clase para el corazón negro
+        }
 
         // Posición X aleatoria
         const xPos = Math.random() * (window.innerWidth - 30);
@@ -412,7 +449,6 @@
         // Ajustar intervalo de aparición basado en la puntuación
         heartInterval = Math.max(minHeartInterval, 2000 - score / 30);
       }
-
       // Función para crear una nube
       function createCloud() {
         const cloud = document.createElement("div");
@@ -495,30 +531,43 @@
           const characterCenterY =
             window.innerHeight - 100 - characterHeight / 2;
 
-          // Verificar colisión con umbral reducido
+          // Verificar colisión
           if (
             Math.abs(heartCenterX - characterCenterX) <
-              (heartWidth / 2 + characterWidth / 2) * 0.8 && // Colisión en X (reducida)
+              heartWidth / 2 + characterWidth / 2 && // Colisión en X
             Math.abs(heartCenterY - characterCenterY) <
-              (heartHeight / 2 + characterHeight / 2) * 0.8 // Colisión en Y (reducida)
+              heartHeight / 2 + characterHeight / 2 // Colisión en Y
           ) {
-            // Colisión detectada
+            // Verificar si es un corazón negro
+            if (heart.classList.contains("black")) {
+              // Restar 200 puntos
+              score -= 200;
+              scoreElement.textContent = "Puntos: " + score;
+
+              // Mostrar mensaje "-200"
+              showMessage("-200", heartCenterX, heartCenterY);
+            } else {
+              // Aumentar puntuación (corazón normal)
+              score += 100;
+              scoreElement.textContent = "Puntos: " + score;
+
+              // Reproducir sonido de moneda si el sonido está habilitado
+              if (isSoundEnabled) {
+                coinSound.currentTime = 0;
+                coinSound.play();
+              }
+            }
+
+            // Eliminar el corazón
             gameContainer.removeChild(heart);
             hearts.splice(index, 1);
 
-            // Aumentar puntuación
-            score += 100;
-            scoreElement.textContent = "Puntos: " + score;
-
-            // Reproducir sonido de moneda si el sonido está habilitado
-            if (isSoundEnabled) {
-              coinSound.currentTime = 0;
-              coinSound.play();
-            }
-
-            // Verificar victoria
+            // Verificar victoria o derrota
             if (score >= winScore) {
               victory();
+            } else if (score < 0) {
+              score = 0; // Evitar puntuación negativa
+              scoreElement.textContent = "Puntos: " + score;
             }
           }
           // Corazón tocó el suelo
@@ -537,7 +586,6 @@
             }
           }
         });
-
         // Mover nubes
         clouds.forEach((cloud, index) => {
           const speed = parseFloat(cloud.dataset.speed);
