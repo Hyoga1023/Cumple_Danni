@@ -207,20 +207,22 @@
         let lostHearts = 0;
         const maxLostHearts = 10;
         const winScore = 5000;
-        let characterSpeed = 7;
+        let characterSpeed = 4;
         let characterPosition = window.innerWidth / 2;
         let hearts = [];
         let clouds = [];
         let isMovingLeft = false;
         let isMovingRight = false;
         let lastHeartTime = 0;
-        let heartInterval = 2000; // Tiempo inicial entre corazones (ms)
+        let heartInterval = 2500; // Tiempo inicial entre corazones (ms)
         let minHeartInterval = 500; // Intervalo mínimo entre corazones
         let gameRunning = false;
         let walkingAnimation = null;
         let isWalking = false;
         let isSoundEnabled = true;
-        
+        const heartFallSpeed = 1.0; // Velocidad de caída más lenta
+
+   
         // Elementos del DOM
         const character = document.getElementById('character');
         const characterSprite = document.getElementById('character-sprite');
@@ -236,7 +238,15 @@
         const restartBtn = document.getElementById('restart-btn');
         const retryBtn = document.getElementById('retry-btn');
         const soundToggle = document.getElementById('sound-toggle');
-        
+   
+        function moveHearts() {
+        hearts.forEach(heart => {
+            heart.y += heartFallSpeed; // Ajuste a velocidad más lenta
+            heart.element.style.top = `${heart.y}px`;
+
+                // Lógica para verificar si toca el suelo o es recogido...
+            });
+        }
         // Elementos de audio
         const bgMusic = new Audio('sound/overworld.wav');
         bgMusic.loop = true;
