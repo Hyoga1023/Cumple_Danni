@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recolector de Corazones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            background-color: #87CEEB; /* Cielo azul */
+        }
+        
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #score-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        #score, #lives {
+            font-size: 24px;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        
+        #character {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 70px;
+            z-index: 2;
+            transition: transform 0.1s;
+        }
+        
+        #character-sprite {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+        }
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="M15,30 L13,28 C5,20 0,15 0,9 C0,4 4,0 9,0 C12,0 14,1 15,3 C16,1 18,0 21,0 C26,0 30,4 30,9 C30,15 25,20 17,28 L15,30 Z" fill="red"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+            z-index: 1;
+        }
+        
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background-color: #8B4513; /* Marrón */
+            z-index: 1;
+        }
+        
+        #grass {
+            position: absolute;
+            bottom: 100px;
+            width: 100%;
+            height: 20px;
+            background-color: #228B22; /* Verde oscuro */
+            z-index: 1;
+        }
+        
+        .cloud {
+            position: absolute;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><ellipse cx="30" cy="30" rx="30" ry="20" fill="white"/><ellipse cx="70" cy="30" rx="30" ry="20" fill="white"/><ellipse cx="50" cy="20" rx="25" ry="20" fill="white"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+            width: 100px;
+            height: 60px;
+            z-index: 0;
+        }
+        
+        #left-btn, #right-btn {
+            position: absolute;
+            bottom: 20px;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            z-index: 10;
+            user-select: none;
+        }
+        
+        #left-btn {
+            left: 20px;
+        }
+        
+        #right-btn {
+            right: 20px;
+        }
+        
+        .message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            display: none;
+            z-index: 20;
+            max-width: 90%;
+        }
+        
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #sound-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="score-container">
+            <div id="score">Puntos: 0</div>
+            <div id="lives">Corazones perdidos: 0/10</div>
+        </div>
+        <div id="sound-toggle">🔊</div>
+        <div id="grass"></div>
+        <div id="ground"></div>
+        <div id="character">
+            <div id="character-sprite"></div>
+            <div id="tray"></div>
+        </div>
+        <div id="left-btn">←</div>
+        <div id="right-btn">→</div>
+        <div id="start-message" class="message-box">
+            <h2>Recolector de Corazones</h2>
+            <p>¡Recoge los corazones antes de que toquen el suelo!</p>
+            <p>Objetivo: Llegar a 5000 puntos</p>
+            <p>Cuidado: Si dejas caer 10 corazones, pierdes</p>
+            <button id="start-btn" class="button">Comenzar</button>
+        </div>
+        <div id="victory-message" class="message-box">
+            ¡Ganaste! Recogiste todo mi amor. ❤️
+            <br>
+            <button id="restart-btn" class="button">Jugar de nuevo</button>
+        </div>
+        <div id="game-over-message" class="message-box">
+            ¡Oh no! Has dejado caer demasiados corazones.
+            <br>
+            <button id="retry-btn" class="button">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+       // Variables del juego
+        let score = 0;
+        let lostHearts = 0;
+        const maxLostHearts = 10;
+        const winScore = 5000;
+        let characterSpeed = 7;
+        let characterPosition = window.innerWidth / 2;
+        let hearts = [];
+        let clouds = [];
+        let isMovingLeft = false;
+        let isMovingRight = false;
+        let lastHeartTime = 0;
+        let heartInterval = 2000; // Tiempo inicial entre corazones (ms)
+        let minHeartInterval = 500; // Intervalo mínimo entre corazones
+        let gameRunning = false;
+        let walkingAnimation = null;
+        let isWalking = false;
+        let isSoundEnabled = true;
+        
+        // Elementos del DOM
+        const character = document.getElementById('character');
+        const characterSprite = document.getElementById('character-sprite');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const gameContainer = document.getElementById('game-container');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        const startMessage = document.getElementById('start-message');
+        const victoryMessage = document.getElementById('victory-message');
+        const gameOverMessage = document.getElementById('game-over-message');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const soundToggle = document.getElementById('sound-toggle');
+        
+        // Elementos de audio
+        const bgMusic = new Audio('sound/overworld.wav');
+        bgMusic.loop = true;
+        
+        const gameOverSound = new Audio('sound/game-over.wav');
+        const victorySound = new Audio('sound/level-complete.wav');
+        const coinSound = new Audio('sound/mario-coin.mp3'); // Nuevo sonido de moneda
+        
+        // Configurar imágenes del personaje
+        const marioStanding = 'img/mario_quieto.png';
+        const marioRunningRight = 'img/mario_corre_derecha.png';
+        const marioRunningLeft = 'img/mario_corre_izquierda.png';
+        
+        // Establecer imagen inicial
+        characterSprite.style.backgroundImage = `url('${marioStanding}')`;
+        
+        // Mostrar mensaje inicial
+        startMessage.style.display = 'block';
+        
+        // Establecer posición inicial del personaje
+        character.style.left = characterPosition + 'px';
+        
+        // Control de sonido
+        soundToggle.addEventListener('click', toggleSound);
+        
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            soundToggle.textContent = isSoundEnabled ? '🔊' : '🔇';
+            
+            if (isSoundEnabled) {
+                if (gameRunning) bgMusic.play();
+            } else {
+                bgMusic.pause();
+                gameOverSound.pause();
+                victorySound.pause();
+                coinSound.pause();
+            }
+        }
+        
+        // Crear nubes iniciales
+        for (let i = 0; i < 5; i++) {
+            createCloud();
+        }
+        
+        // Eventos de botones táctiles
+        leftBtn.addEventListener('touchstart', () => {
+            isMovingLeft = true;
+            isMovingRight = false;
+            updateCharacterSprite();
+        });
+        
+        leftBtn.addEventListener('touchend', () => {
+            isMovingLeft = false;
+            updateCharacterSprite();
+        });
+        
+        rightBtn.addEventListener('touchstart', () => {
+            isMovingRight = true;
+            isMovingLeft = false;
+            updateCharacterSprite();
+        });
+        
+        rightBtn.addEventListener('touchend', () => {
+            isMovingRight = false;
+            updateCharacterSprite();
+        });
+        
+        // Eventos de ratón para pruebas en escritorio
+        leftBtn.addEventListener('mousedown', () => {
+            isMovingLeft = true;
+            isMovingRight = false;
+            updateCharacterSprite();
+        });
+        
+        leftBtn.addEventListener('mouseup', () => {
+            isMovingLeft = false;
+            updateCharacterSprite();
+        });
+        
+        leftBtn.addEventListener('mouseleave', () => {
+            isMovingLeft = false;
+            updateCharacterSprite();
+        });
+        
+        rightBtn.addEventListener('mousedown', () => {
+            isMovingRight = true;
+            isMovingLeft = false;
+            updateCharacterSprite();
+        });
+        
+        rightBtn.addEventListener('mouseup', () => {
+            isMovingRight = false;
+            updateCharacterSprite();
+        });
+        
+        rightBtn.addEventListener('mouseleave', () => {
+            isMovingRight = false;
+            updateCharacterSprite();
+        });
+        
+        // Evento para iniciar el juego
+        startBtn.addEventListener('click', startGame);
+        
+        // Eventos para reiniciar el juego
+        restartBtn.addEventListener('click', restartGame);
+        retryBtn.addEventListener('click', restartGame);
+        
+        // Función para actualizar sprite del personaje
+        function updateCharacterSprite() {
+            if (isMovingLeft) {
+                characterSprite.style.backgroundImage = `url('${marioRunningLeft}')`;
+                character.style.transform = 'translateX(-50%)';
+            } else if (isMovingRight) {
+                characterSprite.style.backgroundImage = `url('${marioRunningRight}')`;
+                character.style.transform = 'translateX(-50%)';
+            } else {
+                characterSprite.style.backgroundImage = `url('${marioStanding}')`;
+                character.style.transform = 'translateX(-50%)';
+            }
+        }
+        
+        // Función para iniciar el juego
+        function startGame() {
+            startMessage.style.display = 'none';
+            gameRunning = true;
+            
+            // Iniciar música si el sonido está habilitado
+            if (isSoundEnabled) {
+                bgMusic.currentTime = 0;
+                bgMusic.play();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Función para crear un corazón
+        function createHeart() {
+            if (!gameRunning) return;
+            
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            
+            // Posición X aleatoria
+            const xPos = Math.random() * (window.innerWidth - 30);
+            heart.style.left = xPos + 'px';
+            heart.style.top = '0px';
+            
+            // Velocidad de caída aleatoria (más lenta)
+            const speed = 1 + Math.random() * 1.5;
+            heart.dataset.speed = speed;
+            
+            // Parámetros para el movimiento de tambaleo
+            heart.dataset.swingSpeed = 0.5 + Math.random() * 1;
+            heart.dataset.swingWidth = 10 + Math.random() * 20;
+            heart.dataset.swingOffset = Math.random() * Math.PI * 2;
+            heart.dataset.baseX = xPos;
+            heart.dataset.time = 0;
+            
+            gameContainer.appendChild(heart);
+            hearts.push(heart);
+            
+            // Ajustar intervalo de aparición basado en la puntuación
+            heartInterval = Math.max(minHeartInterval, 2000 - (score / 30));
+        }
+        
+        // Función para crear una nube
+        function createCloud() {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            
+            // Posición aleatoria
+            const xPos = Math.random() * window.innerWidth;
+            const yPos = Math.random() * (window.innerHeight / 2);
+            cloud.style.left = xPos + 'px';
+            cloud.style.top = yPos + 'px';
+            
+            // Velocidad aleatoria
+            const speed = 0.2 + Math.random() * 0.5;
+            cloud.dataset.speed = speed;
+            
+            gameContainer.appendChild(cloud);
+            clouds.push(cloud);
+        }
+        
+        // Bucle principal del juego
+        function gameLoop(timestamp) {
+            if (!gameRunning) return;
+            
+            // Mover personaje
+            if (isMovingLeft) {
+                characterPosition = Math.max(25, characterPosition - characterSpeed);
+            }
+            
+            if (isMovingRight) {
+                characterPosition = Math.min(window.innerWidth - 25, characterPosition + characterSpeed);
+            }
+            
+            character.style.left = characterPosition + 'px';
+            
+            // Crear corazones periódicamente
+            if (timestamp - lastHeartTime > heartInterval) {
+                createHeart();
+                lastHeartTime = timestamp;
+            }
+            
+            // Mover corazones y detectar colisiones
+            hearts.forEach((heart, index) => {
+                // Actualizar posición vertical
+                const speed = parseFloat(heart.dataset.speed);
+                const currentTop = parseFloat(heart.style.top) || 0;
+                const newTop = currentTop + speed;
+                
+                // Actualizar tiempo para el movimiento de tambaleo
+                heart.dataset.time = parseFloat(heart.dataset.time) + 0.05;
+                const time = parseFloat(heart.dataset.time);
+                
+                // Calcular movimiento de tambaleo
+                const swingSpeed = parseFloat(heart.dataset.swingSpeed);
+                const swingWidth = parseFloat(heart.dataset.swingWidth);
+                const swingOffset = parseFloat(heart.dataset.swingOffset);
+                const baseX = parseFloat(heart.dataset.baseX);
+                
+                const newX = baseX + Math.sin(time * swingSpeed + swingOffset) * swingWidth;
+                
+                // Aplicar posiciones
+                heart.style.top = newTop + 'px';
+                heart.style.left = newX + 'px';
+                
+                // Colisión con el personaje (ahora colisiona con la bandeja)
+                const heartX = parseFloat(heart.style.left) + 15; // Centro del corazón
+                const heartY = newTop + 15;
+                const trayX = characterPosition;
+                const trayY = window.innerHeight - 100 - 15; // Posición Y de la bandeja
+                const trayWidth = 50;
+                
+                // Verificar colisión con la bandeja
+                if (heartY > trayY - 10 && heartY < trayY + 10 && 
+                    heartX > trayX - trayWidth/2 && heartX < trayX + trayWidth/2) {
+                    gameContainer.removeChild(heart);
+                    hearts.splice(index, 1);
+                    
+                    // Aumentar puntuación
+                    score += 100;
+                    scoreElement.textContent = 'Puntos: ' + score;
+                    
+                    // Reproducir sonido de moneda si el sonido está habilitado
+                    if (isSoundEnabled) {
+                        coinSound.currentTime = 0; // Reiniciar el sonido si ya estaba reproduciéndose
+                        coinSound.play();
+                    }
+                    
+                    // Verificar victoria
+                    if (score >= winScore) {
+                        victory();
+                    }
+                } 
+                // Corazón tocó el suelo
+                else if (newTop > window.innerHeight - 120) {
+                    gameContainer.removeChild(heart);
+                    hearts.splice(index, 1);
+                    
+                    // Incrementar contador de corazones perdidos
+                    lostHearts++;
+                    livesElement.textContent = 'Corazones perdidos: ' + lostHearts + '/10';
+                    
+                    // Verificar game over
+                    if (lostHearts >= maxLostHearts) {
+                        gameOver();
+                    }
+                }
+            });
+            
+            // Mover nubes
+            clouds.forEach((cloud, index) => {
+                const speed = parseFloat(cloud.dataset.speed);
+                const currentLeft = parseFloat(cloud.style.left) || 0;
+                let newLeft = currentLeft + speed;
+                
+                // Si la nube sale de la pantalla, vuelve al otro lado
+                if (newLeft > window.innerWidth) {
+                    newLeft = -100;
+                }
+                
+                cloud.style.left = newLeft + 'px';
+            });
+            
+            // Crear nuevas nubes ocasionalmente
+            if (Math.random() < 0.002) {
+                createCloud();
+            }
+            
+            // Continuar bucle
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Función de victoria
+        function victory() {
+            gameRunning = false;
+            
+            // Detener música de fondo y reproducir música de victoria
+            bgMusic.pause();
+            if (isSoundEnabled) {
+                victorySound.currentTime = 0;
+                victorySound.play();
+            }
+            
+            victoryMessage.style.display = 'block';
+        }
+        
+        // Función de game over
+        function gameOver() {
+            gameRunning = false;
+            
+            // Detener música de fondo y reproducir sonido de game over
+            bgMusic.pause();
+            if (isSoundEnabled) {
+                gameOverSound.currentTime = 0;
+                gameOverSound.play();
+            }
+            
+            gameOverMessage.style.display = 'block';
+        }
+        
+        // Función para reiniciar el juego
+        function restartGame() {
+            // Limpiar corazones
+            hearts.forEach(heart => {
+                gameContainer.removeChild(heart);
+            });
+            hearts = [];
+            
+            // Detener sonidos
+            victorySound.pause();
+            gameOverSound.pause();
+            coinSound.pause();
+            
+            // Reiniciar variables
+            score = 0;
+            lostHearts = 0;
+            scoreElement.textContent = 'Puntos: 0';
+            livesElement.textContent = 'Corazones perdidos: 0/10';
+            heartInterval = 2000;
+            characterPosition = window.innerWidth / 2;
+            character.style.left = characterPosition + 'px';
+            characterSprite.style.backgroundImage = `url('${marioStanding}')`;
+            character.style.transform = 'translateX(-50%)';
+            lastHeartTime = 0;
+            gameRunning = true;
+            
+            // Ocultar mensajes
+            victoryMessage.style.display = 'none';
+            gameOverMessage.style.display = 'none';
+            
+            // Reiniciar música
+            if (isSoundEnabled) {
+                bgMusic.currentTime = 0;
+                bgMusic.play();
+            }
+            
+            // Reiniciar bucle
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Precargar imágenes y sonidos
+        function preloadResources() {
+            const images = [marioStanding, marioRunningLeft, marioRunningRight];
+            images.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
+        
+        // Llamar a precargar al inicio
+        preloadResources();
+        
+        // Ajustar el tamaño del juego cuando cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            characterPosition = Math.min(characterPosition, window.innerWidth - 25);
+            character.style.left = characterPosition + 'px';
+        });
+    </script>
+</body>
+</html>

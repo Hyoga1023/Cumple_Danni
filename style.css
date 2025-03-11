@@ -24,7 +24,10 @@ header {
     height: 10vh;
     margin-top: 20px;
 }
-
+a{
+    text-decoration: none;
+    margin: 0 0;
+}
 h1 {
     font-family: 'MagazineLetter', sans-serif;
     font-size: 4rem;
@@ -70,6 +73,7 @@ h3 {
 .container_stitch img {
     width: 100%;
     height: auto;
+    margin-bottom: 0;
 }
 
 .container_stitch2 {
@@ -126,7 +130,6 @@ footer {
     height: 10vh;
     margin-top: 20px;
 }
-
 /* Estilos para los corazones */
 .corazon {
     position: fixed;
