@@ -495,13 +495,14 @@
           const characterCenterY =
             window.innerHeight - 100 - characterHeight / 2;
 
-          // Verificar colisión
+          // Verificar colisión con umbral reducido
           if (
             Math.abs(heartCenterX - characterCenterX) <
-              heartWidth / 2 + characterWidth / 2 && // Colisión en X
+              (heartWidth / 2 + characterWidth / 2) * 0.8 && // Colisión en X (reducida)
             Math.abs(heartCenterY - characterCenterY) <
-              heartHeight / 2 + characterHeight / 2 // Colisión en Y
+              (heartHeight / 2 + characterHeight / 2) * 0.8 // Colisión en Y (reducida)
           ) {
+            // Colisión detectada
             gameContainer.removeChild(heart);
             hearts.splice(index, 1);
 
@@ -511,7 +512,7 @@
 
             // Reproducir sonido de moneda si el sonido está habilitado
             if (isSoundEnabled) {
-              coinSound.currentTime = 0; // Reiniciar el sonido si ya estaba reproduciéndose
+              coinSound.currentTime = 0;
               coinSound.play();
             }
 
