@@ -175,7 +175,7 @@
     <div id="game-container">
       <div id="score-container">
         <div id="score">Puntos: 0</div>
-        <div id="lives">Corazones perdidos: 0/10</div>
+        <div id="lives">Corazones perdidos: 0/5</div>
       </div>
       <div id="sound-toggle">🔊</div>
       <div id="grass"></div>
@@ -188,7 +188,10 @@
       <div id="right-btn">→</div>
       <div id="start-message" class="message-box">
         <h2>Recolector de Corazones</h2>
-        <p>¡Recoge los corazones antes de que toquen el suelo! Pero... no toques los Negros</p>
+        <p>
+          ¡Recoge los corazones antes de que toquen el suelo! Pero... no toques
+          los Negros
+        </p>
         <p>Objetivo: Llegar a 5000 puntos</p>
         <p>Cuidado: Si dejas caer 5 corazones, pierdes</p>
         <button id="start-btn" class="button">Comenzar</button>
@@ -581,13 +584,16 @@
 
               // Verificar game over
               if (lostHearts >= maxLostHearts) {
-                gameOver();
+                gameOver(); // Aquí no necesitamos un "return" porque no afecta el flujo actual
               }
             }
 
             // Eliminar el corazón del juego
-            gameContainer.removeChild(heart);
-            hearts.splice(index, 1);
+            if (gameContainer.contains(heart)) {
+              // Aseguramos que existe antes de remover
+              gameContainer.removeChild(heart);
+            }
+            hearts.splice(index, 1); // Eliminamos del arreglo
           }
         });
 
@@ -659,7 +665,7 @@
         score = 0;
         lostHearts = 0;
         scoreElement.textContent = "Puntos: 0";
-        livesElement.textContent = "Corazones perdidos: 0/10";
+        livesElement.textContent = "Corazones perdidos: 0/5";
         heartInterval = 2000;
         characterPosition = window.innerWidth / 2;
         character.style.left = characterPosition + "px";
