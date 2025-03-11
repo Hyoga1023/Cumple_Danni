@@ -572,20 +572,25 @@
           }
           // Corazón tocó el suelo
           else if (newTop > window.innerHeight - 120) {
+            // Verificar si es un corazón negro
+            if (!heart.classList.contains("black")) {
+              // Incrementar contador de corazones perdidos solo si no es negro
+              lostHearts++;
+              livesElement.textContent =
+                "Corazones perdidos: " + lostHearts + "/10";
+
+              // Verificar game over
+              if (lostHearts >= maxLostHearts) {
+                gameOver();
+              }
+            }
+
+            // Eliminar el corazón del juego
             gameContainer.removeChild(heart);
             hearts.splice(index, 1);
-
-            // Incrementar contador de corazones perdidos
-            lostHearts++;
-            livesElement.textContent =
-              "Corazones perdidos: " + lostHearts + "/10";
-
-            // Verificar game over
-            if (lostHearts >= maxLostHearts) {
-              gameOver();
-            }
           }
         });
+
         // Mover nubes
         clouds.forEach((cloud, index) => {
           const speed = parseFloat(cloud.dataset.speed);
