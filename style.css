@@ -22,7 +22,7 @@ header {
     justify-content: center;
     align-items: center;
     height: 10vh;
-    margin-top: 30px;
+    margin-top: 25px;
 }
 a{
     text-decoration: none;
@@ -33,7 +33,7 @@ h1 {
     font-size: 4rem;
     color: #000;
     text-align: center;
-    margin-top: 10%;
+    margin-top: 5%;
     word-spacing: 0.5em;
 }
 
