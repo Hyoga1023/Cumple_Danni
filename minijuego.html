@@ -221,13 +221,13 @@
       let isMovingLeft = false;
       let isMovingRight = false;
       let lastHeartTime = 0;
-      let heartInterval = 800; // Tiempo inicial entre corazones (ms)
+      let heartInterval = 500; // Tiempo inicial entre corazones (ms)
       let minHeartInterval = 100; // Intervalo mínimo entre corazones
       let gameRunning = false;
       let walkingAnimation = null;
       let isWalking = false;
       let isSoundEnabled = true;
-      const heartFallSpeed = 1.0; // Velocidad de caída más lenta
+      const heartFallSpeed = 2.0; // Velocidad de caída más lenta
 
       // Elementos del DOM
       const character = document.getElementById("character");
