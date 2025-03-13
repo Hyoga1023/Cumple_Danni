@@ -50,7 +50,7 @@ h3 {
     font-family: 'arial', sans-serif;
     color: blueviolet;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    font-size: 2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     text-align: center;
 }
@@ -61,13 +61,15 @@ h3 {
 
 .container_stitch {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 0;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
-
+.stitch_center{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: 30px;
+}
 .container_stitch img {
     width: 100%;
     height: auto;
@@ -90,7 +92,7 @@ h3 {
     text-align: center;
     color: black;
     padding: 0 10px;
-    margin-top: 115px;
+    margin-top: 30px;
 }
 .titulo_e_imagen {
     display: flex;
